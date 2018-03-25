@@ -5,18 +5,11 @@ import (
 	"net/http"
 )
 
-type initialData struct {
-	PageTitle string
-}
-
 func init() {
-	tmpl := template.Must(template.ParseFiles("dist/index.html"))
-	fs := http.FileServer(http.Dir("dist/static/"))
+	tmpl := template.Must(template.ParseFiles("build/index.html"))
+	fs := http.FileServer(http.Dir("build/static/"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	http.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
-		data := initialData{
-			PageTitle: "Swimware catalog",
-		}
-		tmpl.Execute(res, data)
+		tmpl.Execute(res, nil)
 	})
 }
