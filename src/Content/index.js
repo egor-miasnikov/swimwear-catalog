@@ -1,7 +1,7 @@
 import React from "react";
-import GridList from "./GridList";
-import SideBar from "./Sidebar";
-import { getCategories, getItems } from "../api";
+import ItemList from "./ItemList";
+import { getCategories } from "../api";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 export default class Content extends React.Component {
   constructor(props) {
@@ -12,11 +12,6 @@ export default class Content extends React.Component {
   }
   componentWillMount() {
     getCategories().then(categories => {
-      categories.forEach(category => {
-        return getItems(category.items).then(items => {
-          category.items = items;
-        });
-      });
       this.setState({
         categories
       });
@@ -24,18 +19,38 @@ export default class Content extends React.Component {
   }
   render() {
     return (
-      <div>
-        <SideBar items={this.state.items} categories={this.state.categories} />
-        <div
-          style={{
-            paddingLeft: 240,
-            paddingRight: 40
-          }}
-        >
-          <h1>Content</h1>
-          <GridList />
+      <Router>
+        <div style={{ display: "flex" }}>
+          <ul
+            style={{
+              paddingLeft: 10,
+              listStyleType: "none"
+            }}
+          >
+            {this.state.categories.map(category => (
+              <li>
+                <Link to={category.name}>{category.name}</Link>
+              </li>
+            ))}
+          </ul>
+          <div
+            style={{
+              paddingLeft: 240,
+              paddingRight: 40
+            }}
+          >
+            {this.state.categories.map((category, index) => {
+              return (
+                <Route
+                  key={index}
+                  path={`/${category.name}`}
+                  render={props => <ItemList {...props} category={category} />}
+                />
+              );
+            })}
+          </div>
         </div>
-      </div>
+      </Router>
     );
   }
 }
