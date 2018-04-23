@@ -1,5 +1,6 @@
 import React from "react";
 import ItemList from "./ItemList";
+import ItemPage from "./ItemPage";
 import { getCategories } from "../api";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
@@ -29,7 +30,7 @@ export default class Content extends React.Component {
           >
             {this.state.categories.map(category => (
               <li>
-                <Link to={category.name}>{category.name}</Link>
+                <Link to={`/${category.name}`}>{category.name}</Link>
               </li>
             ))}
           </ul>
@@ -41,11 +42,21 @@ export default class Content extends React.Component {
           >
             {this.state.categories.map((category, index) => {
               return (
-                <Route
-                  key={index}
-                  path={`/${category.name}`}
-                  render={props => <ItemList {...props} category={category} />}
-                />
+                <div>
+                  <Route
+                    key={index}
+                    path={`/${category.name}`}
+                    exact={true}
+                    render={props => (
+                      <ItemList {...props} category={category} />
+                    )}
+                  />
+                  <Route
+                    key={index}
+                    path={`/${category.name}/:itemId`}
+                    component={ItemPage}
+                  />
+                </div>
               );
             })}
           </div>
